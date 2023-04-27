@@ -1,0 +1,114 @@
+package org.cyclic.action.batch.service.impl;
+
+import org.cyclic.action.batch.enumeration.ActionType;
+import org.cyclic.action.batch.enumeration.Algorithm;
+import org.cyclic.action.batch.model.Position;
+import org.cyclic.action.batch.service.AlgorithmService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+@Service
+public class AlgorithmServiceImpl implements AlgorithmService {
+    @Override
+    public Map<Algorithm, List<Position>> defineAlgorithmMap(final Position position, final List<Position> history) {
+        final String positionThirdGroup = position.getThirdGroup();
+        final String positionStore = position.getStore();
+        final Integer positionStoreFormat = position.getStoreFormat();
+        final Integer positionCode = position.getActionCode();
+
+        final List<Position> firstAlgorithmPositions = history.stream()
+                .filter(firstAlgorithmCondition(positionStore, positionCode))
+                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
+                .toList();
+        if (!firstAlgorithmPositions.isEmpty()) {
+            return Map.of(Algorithm.FIRST, firstAlgorithmPositions);
+        }
+
+        final List<Position> secondAlgorithmPositions = history.stream()
+                .filter(secondAlgorithmCondition(positionStoreFormat, positionCode))
+                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
+                .toList();
+        if (!secondAlgorithmPositions.isEmpty()) {
+            return Map.of(Algorithm.SECOND, secondAlgorithmPositions);
+        }
+
+        final List<Position> thirdAlgorithmPositions = history.stream()
+                .filter(thirdAlgorithmCondition(positionCode))
+                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
+                .toList();
+        if (!thirdAlgorithmPositions.isEmpty()) {
+            return Map.of(Algorithm.THIRD, thirdAlgorithmPositions);
+        }
+
+        final List<Position> fourthAlgorithmPositions = history.stream()
+                .filter(fourthAlgorithmCondition(positionStore, positionThirdGroup))
+                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
+                .toList();
+        if (!fourthAlgorithmPositions.isEmpty()) {
+            return Map.of(Algorithm.FOURTH, fourthAlgorithmPositions);
+        }
+
+        final List<Position> fifthAlgorithmPositions = history.stream()
+                .filter(fifthAlgorithmCondition(positionStoreFormat, positionThirdGroup))
+                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
+                .toList();
+        if (!fifthAlgorithmPositions.isEmpty()) {
+            return Map.of(Algorithm.FIFTH, fifthAlgorithmPositions);
+        }
+
+        final List<Position> sixthAlgorithmPositions = history.stream()
+                .filter(sixthAlgorithmCondition(positionThirdGroup))
+                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
+                .toList();
+        if (!sixthAlgorithmPositions.isEmpty()) {
+            return Map.of(Algorithm.SIXTH, sixthAlgorithmPositions);
+        }
+
+        return Map.of(Algorithm.ZERO, List.of());
+    }
+
+    @Override
+    public Algorithm getAlgorithm(final Map<Algorithm, List<Position>> algorithmMap) {
+        return algorithmMap.entrySet().stream()
+                .findFirst()
+                .map(Map.Entry::getKey)
+                .orElse(Algorithm.ZERO);
+    }
+
+    private static Predicate<Position> firstAlgorithmCondition(final String positionStore,
+                                                               final Integer positionCode) {
+        return historyPos -> Objects.equals(historyPos.getStore(), positionStore)
+                && Objects.equals(historyPos.getActionCode(), positionCode);
+    }
+
+    private static Predicate<Position> secondAlgorithmCondition(final Integer positionStoreFormat,
+                                                                final Integer positionCode) {
+        return historyPos -> Objects.equals(historyPos.getStoreFormat(), positionStoreFormat)
+                && Objects.equals(historyPos.getActionCode(), positionCode);
+    }
+
+    private static Predicate<Position> thirdAlgorithmCondition(final Integer positionCode) {
+        return historyPos -> Objects.equals(historyPos.getActionCode(), positionCode);
+    }
+
+    private static Predicate<Position> fourthAlgorithmCondition(final String positionStore,
+                                                                final String positionThirdGroup) {
+        return historyPos -> Objects.equals(historyPos.getStore(), positionStore)
+                && Objects.equals(historyPos.getThirdGroup(), positionThirdGroup);
+    }
+
+    private static Predicate<Position> fifthAlgorithmCondition(final Integer positionStoreFormat,
+                                                               final String positionThirdGroup) {
+        return historyPos -> Objects.equals(historyPos.getStoreFormat(), positionStoreFormat)
+                && Objects.equals(historyPos.getThirdGroup(), positionThirdGroup);
+    }
+
+    private static Predicate<Position> sixthAlgorithmCondition(final String positionThirdGroup) {
+        return historyPos -> Objects.equals(historyPos.getThirdGroup(), positionThirdGroup);
+    }
+}
+
