@@ -172,8 +172,11 @@ public class ExcelPoiItemWriter implements ItemStreamWriter<Position> {
 
     private String getFilePath() {
         final String directory = excelProperties.getCyclicActionOutputDirectory();
-        return String.format("%sЦиклічна акція_%s-%s.xlsx", directory,
+        return String.format(
+                "%sЦиклічна акція_%s-%s.xlsx",
+                directory,
                 actionStartDate.format(DEFAULT_DATE_FORMAT),
-                actionEndDate.format(DEFAULT_DATE_FORMAT));
+                actionEndDate.format(DEFAULT_DATE_FORMAT)
+        );
     }
 }

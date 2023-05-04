@@ -23,5 +23,5 @@ excel-management:
     action-history: C:\Users\Ya.Yarmoshyk\Desktop\Звіти на java\Прогнозування акцій\
 
 cyclic-action:
-  start-date: 2023-05-03
-  end-date: 2023-05-16
+  start-date: 2023-05-17
+  end-date: 2023-05-30
