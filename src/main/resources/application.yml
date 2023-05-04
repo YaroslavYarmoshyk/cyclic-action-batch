@@ -12,10 +12,10 @@ spring:
 excel-management:
   skip-lines:
     action-history: 5
-    actual-avg-sales: 6
+    actual-avg-sales: 7
   header-row-index:
     action-history: 4
-    actual-avg-sales: 5
+    actual-avg-sales: 6
   file-path:
     action-history: C:\Users\Ya.Yarmoshyk\Desktop\Звіти на java\Прогнозування акцій\дані\Акційна історія.xlsx
     actual-avg-sales: C:\Users\Ya.Yarmoshyk\Desktop\Звіти на java\Прогнозування акцій\дані\Актуальні СДП.xlsx

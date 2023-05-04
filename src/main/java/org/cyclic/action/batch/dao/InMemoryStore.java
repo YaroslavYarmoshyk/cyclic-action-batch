@@ -6,6 +6,7 @@ import org.cyclic.action.batch.model.SalesPeriod;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class InMemoryStore {
     public static List<Position> actionHistory = new ArrayList<>();
@@ -25,6 +26,9 @@ public class InMemoryStore {
     }
 
     public static boolean isCyclicActionContainsCode(final Integer code) {
+        if (Objects.isNull(code)) {
+            return false;
+        }
         return cyclicAction.stream()
                 .map(Position::getActionCode)
                 .anyMatch(code::equals);
