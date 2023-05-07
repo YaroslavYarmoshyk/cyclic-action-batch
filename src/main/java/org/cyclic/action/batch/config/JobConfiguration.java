@@ -3,7 +3,6 @@ package org.cyclic.action.batch.config;
 import lombok.RequiredArgsConstructor;
 import org.cyclic.action.batch.config.processor.ActionHistoryItemProcessor;
 import org.cyclic.action.batch.config.processor.CyclicActionItemProcessor;
-import org.cyclic.action.batch.config.reader.ForecastItemReader;
 import org.cyclic.action.batch.config.writer.ExcelPoiItemWriter;
 import org.cyclic.action.batch.model.Position;
 import org.cyclic.action.batch.model.SalesPeriod;
@@ -12,10 +11,9 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.ItemStreamWriter;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -27,7 +25,7 @@ public class JobConfiguration {
     private final PlatformTransactionManager transactionManager;
     private final ItemStreamReader<Position> actionHistoryReader;
     private final ItemStreamReader<SalesPeriod> actualAvgSalesReader;
-    private final ForecastItemReader forecastItemReader;
+    private final ItemReader<Position> cyclicActionListReader;
     private final ItemStreamWriter<Position> actionHistoryWriter;
     private final ItemStreamWriter<SalesPeriod> actualAvgSalesWriter;
     private final ExcelPoiItemWriter cyclicActionItemWriter;
@@ -66,17 +64,9 @@ public class JobConfiguration {
     public Step thirdStep() {
         return new StepBuilder("forecastStep", jobRepository)
                 .<Position, Position>chunk(500, transactionManager)
-                .reader(forecastItemReader)
+                .reader(cyclicActionListReader)
                 .processor(cyclicActionItemProcessor)
                 .writer(cyclicActionItemWriter)
                 .build();
-    }
-
-    @Bean
-    public Tasklet tasklet() {
-        return (contribution, chunkContext) -> {
-            System.out.println("It's finally working");
-            return RepeatStatus.FINISHED;
-        };
     }
 }
