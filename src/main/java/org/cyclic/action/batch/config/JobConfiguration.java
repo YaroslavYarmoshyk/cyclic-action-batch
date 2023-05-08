@@ -1,6 +1,7 @@
 package org.cyclic.action.batch.config;
 
-import lombok.RequiredArgsConstructor;
+import org.cyclic.action.batch.config.annotations.ActionHistoryReader;
+import org.cyclic.action.batch.config.annotations.ActualAvgSalesReader;
 import org.cyclic.action.batch.config.processor.ActionHistoryItemProcessor;
 import org.cyclic.action.batch.config.processor.CyclicActionItemProcessor;
 import org.cyclic.action.batch.config.writer.ExcelPoiItemWriter;
@@ -19,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-@RequiredArgsConstructor
 public class JobConfiguration {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -31,6 +31,28 @@ public class JobConfiguration {
     private final ExcelPoiItemWriter cyclicActionItemWriter;
     private final CyclicActionItemProcessor cyclicActionItemProcessor;
     private final ActionHistoryItemProcessor actionHistoryItemProcessor;
+
+    public JobConfiguration(final JobRepository jobRepository,
+                            final PlatformTransactionManager transactionManager,
+                            @ActionHistoryReader final ItemStreamReader<Position> actionHistoryReader,
+                            @ActualAvgSalesReader final ItemStreamReader<SalesPeriod> actualAvgSalesReader,
+                            final ItemReader<Position> cyclicActionListReader,
+                            final ItemStreamWriter<Position> actionHistoryWriter,
+                            final ItemStreamWriter<SalesPeriod> actualAvgSalesWriter,
+                            final ExcelPoiItemWriter cyclicActionItemWriter,
+                            final CyclicActionItemProcessor cyclicActionItemProcessor,
+                            final ActionHistoryItemProcessor actionHistoryItemProcessor) {
+        this.jobRepository = jobRepository;
+        this.transactionManager = transactionManager;
+        this.actionHistoryReader = actionHistoryReader;
+        this.actualAvgSalesReader = actualAvgSalesReader;
+        this.cyclicActionListReader = cyclicActionListReader;
+        this.actionHistoryWriter = actionHistoryWriter;
+        this.actualAvgSalesWriter = actualAvgSalesWriter;
+        this.cyclicActionItemWriter = cyclicActionItemWriter;
+        this.cyclicActionItemProcessor = cyclicActionItemProcessor;
+        this.actionHistoryItemProcessor = actionHistoryItemProcessor;
+    }
 
     @Bean
     public Job job() {

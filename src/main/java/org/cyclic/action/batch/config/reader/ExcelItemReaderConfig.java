@@ -2,12 +2,15 @@ package org.cyclic.action.batch.config.reader;
 
 import com.etake.parent.config.reader.ExcelItemReader;
 import lombok.RequiredArgsConstructor;
+import org.cyclic.action.batch.config.annotations.ActionHistoryReader;
+import org.cyclic.action.batch.config.annotations.ActualAvgSalesReader;
 import org.cyclic.action.batch.config.mapper.PositionRowMapper;
 import org.cyclic.action.batch.config.mapper.SalesPeriodRowMapper;
 import org.cyclic.action.batch.config.properties.ExcelManagementProperties;
 import org.cyclic.action.batch.model.Position;
 import org.cyclic.action.batch.model.SalesPeriod;
-import org.springframework.batch.item.ItemStreamReader;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.extensions.excel.poi.PoiItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,7 +24,9 @@ public class ExcelItemReaderConfig {
     private final ExcelItemReader excelItemReader;
 
     @Bean
-    public ItemStreamReader<Position> actionHistoryReader() {
+    @StepScope
+    @ActionHistoryReader
+    public PoiItemReader<Position> actionHistoryReader() {
         final String actionHistoryFilePath = excelProperties.getActionHistoryFilePath();
         final int actionSkipLines = excelProperties.getActionHistorySkipLines();
         final int actionHistoryHeaderRowIndex = excelProperties.getActionHistoryHeaderRowIndex();
@@ -29,7 +34,9 @@ public class ExcelItemReaderConfig {
     }
 
     @Bean
-    public ItemStreamReader<SalesPeriod> actualAvgSalesReader() {
+    @StepScope
+    @ActualAvgSalesReader
+    public PoiItemReader<SalesPeriod> actualAvgSalesReader() {
         final String avgSalesFilePath = excelProperties.getAvgSalesFilePath();
         final int avgSalesSkipLines = excelProperties.getAvgSalesSkipLines();
         final int avgSalesHeaderRowIndex = excelProperties.getAvgSalesHeaderRowIndex();
