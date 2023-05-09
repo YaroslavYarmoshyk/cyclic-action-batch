@@ -1,5 +1,7 @@
 package org.cyclic.action.batch.util;
 
+import org.apache.logging.log4j.util.Strings;
+
 import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
@@ -35,6 +37,42 @@ public final class Constants {
             ACTUAL_AVERAGE_SALES_RESULT,
             FORECAST_ACTION_AVERAGE_SALES,
             DYNAMIC_COEFFICIENT);
+
+    public static final String[] ACTION_HISTORY_COLUMN_NAMES = {
+            MANAGER,
+            Strings.EMPTY,
+            Strings.EMPTY,
+            STORE,
+            Strings.EMPTY,
+            ACTION_CODE,
+            NAME,
+            STORE_FORMAT,
+            CARRYOVER,
+            THIRD_GROUP,
+            ACTION_TYPE,
+            ACTION_START_DATE,
+            ACTION_END_DATE,
+            BEFORE_ACTION_START_DATE,
+            BEFORE_ACTION_END_DATE,
+            ACTION_AVERAGE_SALES,
+            BEFORE_ACTION_AVERAGE_SALES
+    };
+
+    public static final String[] ACTUAL_AVG_SALES_COLUMN_NAMES = {
+            ACTUAL_SALES_STORE,
+            Strings.EMPTY,
+            Strings.EMPTY,
+            Strings.EMPTY,
+            Strings.EMPTY,
+            ACTUAL_SALES_CODE,
+            Strings.EMPTY,
+            Strings.EMPTY,
+            Strings.EMPTY,
+            Strings.EMPTY,
+            Strings.EMPTY,
+            Strings.EMPTY,
+            ACTUAL_AVERAGE_SALES
+    };
 
     public static int DEMAND_DAYS = 14;
     public static int MAX_COEFFICIENT = 5;
