@@ -56,10 +56,10 @@ public class CyclicActionItemProcessor implements ItemProcessor<Position, Positi
 
     private BigDecimal getActualAverageSales(final Position position, final List<SalesPeriod> actualSales) {
         return actualSales.stream()
-                .filter(actual -> Objects.equals(actual.getStore(), position.getStore())
-                        && Objects.equals(actual.getActionCode(), position.getActionCode()))
+                .filter(actual -> Objects.equals(actual.store(), position.getStore())
+                        && Objects.equals(actual.actionCode(), position.getActionCode()))
                 .findFirst()
-                .map(SalesPeriod::getActionAverageSales)
+                .map(SalesPeriod::actionAverageSales)
                 .map(bigDecimal -> bigDecimal.setScale(DEFAULT_AVERAGE_SALES_SCALE, DEFAULT_ROUNDING_MODE))
                 .orElse(BigDecimal.ZERO);
     }

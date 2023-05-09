@@ -26,11 +26,11 @@ public class SalesPeriodRowMapper implements RowMapper<SalesPeriod> {
 
     private SalesPeriod map(final RowSet rowSet) {
         final Properties properties = rowSet.getProperties();
-        return SalesPeriod.builder()
-                .store(getValidStoreName(properties))
-                .actionCode(castToType(properties.get(ACTUAL_SALES_CODE), Integer.class))
-                .actionAverageSales(castToType(properties.get(ACTUAL_AVERAGE_SALES), BigDecimal.class))
-                .build();
+        return new SalesPeriod(
+                getValidStoreName(properties),
+                castToType(properties.get(ACTUAL_SALES_CODE), Integer.class),
+                castToType(properties.get(ACTUAL_AVERAGE_SALES), BigDecimal.class)
+        );
     }
 
     private static String getValidStoreName(final Properties properties) {
