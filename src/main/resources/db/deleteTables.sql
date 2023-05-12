@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS position;
+DROP TABLE IF EXISTS sales_period;

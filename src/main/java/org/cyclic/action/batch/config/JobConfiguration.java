@@ -1,9 +1,11 @@
 package org.cyclic.action.batch.config;
 
+import org.cyclic.action.batch.config.annotations.ActionHistoryProcessor;
 import org.cyclic.action.batch.config.annotations.ActionHistoryReader;
+import org.cyclic.action.batch.config.annotations.ActionHistoryWriter;
 import org.cyclic.action.batch.config.annotations.ActualAvgSalesReader;
+import org.cyclic.action.batch.config.listener.ItemWriteListenerConfig;
 import org.cyclic.action.batch.config.listener.TableCreationListener;
-import org.cyclic.action.batch.config.processor.ActionHistoryItemProcessor;
 import org.cyclic.action.batch.config.processor.CyclicActionItemProcessor;
 import org.cyclic.action.batch.config.writer.ExcelPoiItemWriter;
 import org.cyclic.action.batch.model.Position;
@@ -14,9 +16,11 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.ItemStreamWriter;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -28,23 +32,23 @@ public class JobConfiguration {
     private final ItemStreamReader<Position> actionHistoryReader;
     private final ItemStreamReader<SalesPeriod> actualAvgSalesReader;
     private final ItemReader<Position> cyclicActionListReader;
-    private final ItemStreamWriter<Position> actionHistoryWriter;
+    private final ItemWriter<Position> actionHistoryWriter;
     private final ItemStreamWriter<SalesPeriod> actualAvgSalesWriter;
     private final ExcelPoiItemWriter cyclicActionItemWriter;
     private final CyclicActionItemProcessor cyclicActionItemProcessor;
-    private final ActionHistoryItemProcessor actionHistoryItemProcessor;
+    private final ItemProcessor<Position, Position> actionHistoryItemProcessor;
     private final TableCreationListener tableCreationListener;
 
     public JobConfiguration(final JobRepository jobRepository,
                             final PlatformTransactionManager transactionManager,
                             @ActionHistoryReader final ItemStreamReader<Position> actionHistoryReader,
+                            @ActionHistoryProcessor final ItemProcessor<Position, Position> actionHistoryItemProcessor,
+                            @ActionHistoryWriter final ItemWriter<Position> actionHistoryWriter,
                             @ActualAvgSalesReader final ItemStreamReader<SalesPeriod> actualAvgSalesReader,
                             final ItemReader<Position> cyclicActionListReader,
-                            final ItemStreamWriter<Position> actionHistoryWriter,
                             final ItemStreamWriter<SalesPeriod> actualAvgSalesWriter,
                             final ExcelPoiItemWriter cyclicActionItemWriter,
                             final CyclicActionItemProcessor cyclicActionItemProcessor,
-                            final ActionHistoryItemProcessor actionHistoryItemProcessor,
                             final TableCreationListener tableCreationListener) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
@@ -65,8 +69,8 @@ public class JobConfiguration {
                 .incrementer(new RunIdIncrementer())
                 .listener(tableCreationListener)
                 .start(firstStep())
-                .next(secondStep())
-                .next(thirdStep())
+//                .next(secondStep())
+//                .next(thirdStep())
                 .build();
     }
 
@@ -74,10 +78,11 @@ public class JobConfiguration {
     public Step firstStep() {
         return new StepBuilder("actionHistoryStep", jobRepository)
                 .allowStartIfComplete(true)
-                .<Position, Position>chunk(500, transactionManager)
+                .<Position, Position>chunk(10000, transactionManager)
                 .reader(actionHistoryReader)
                 .processor(actionHistoryItemProcessor)
                 .writer(actionHistoryWriter)
+                .listener(new ItemWriteListenerConfig())
                 .build();
     }
 

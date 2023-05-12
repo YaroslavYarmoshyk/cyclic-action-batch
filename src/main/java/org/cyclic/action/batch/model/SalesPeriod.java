@@ -5,5 +5,5 @@ import java.math.BigDecimal;
 public record SalesPeriod(
         String store,
         Integer actionCode,
-        BigDecimal actionAverageSales
+        BigDecimal actualAverageSales
 ) {}

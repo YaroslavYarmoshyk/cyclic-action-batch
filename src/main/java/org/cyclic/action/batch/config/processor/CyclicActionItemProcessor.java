@@ -59,7 +59,7 @@ public class CyclicActionItemProcessor implements ItemProcessor<Position, Positi
                 .filter(actual -> Objects.equals(actual.store(), position.getStore())
                         && Objects.equals(actual.actionCode(), position.getActionCode()))
                 .findFirst()
-                .map(SalesPeriod::actionAverageSales)
+                .map(SalesPeriod::actualAverageSales)
                 .map(bigDecimal -> bigDecimal.setScale(DEFAULT_AVERAGE_SALES_SCALE, DEFAULT_ROUNDING_MODE))
                 .orElse(BigDecimal.ZERO);
     }

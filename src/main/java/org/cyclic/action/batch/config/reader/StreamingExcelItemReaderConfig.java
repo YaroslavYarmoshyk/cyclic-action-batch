@@ -13,6 +13,7 @@ import org.springframework.batch.extensions.excel.streaming.StreamingXlsxItemRea
 import org.springframework.batch.extensions.excel.support.rowset.DefaultRowSetFactory;
 import org.springframework.batch.extensions.excel.support.rowset.RowSetFactory;
 import org.springframework.batch.extensions.excel.support.rowset.StaticColumnNameExtractor;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -36,6 +37,7 @@ public class StreamingExcelItemReaderConfig {
         reader.setLinesToSkip(excelProperties.getActionHistorySkipLines());
         reader.setRowMapper(positionRowMapper);
         reader.setRowSetFactory(getRowSetFactory(ACTION_HISTORY_COLUMN_NAMES));
+        reader.open(new ExecutionContext());
         return reader;
     }
 

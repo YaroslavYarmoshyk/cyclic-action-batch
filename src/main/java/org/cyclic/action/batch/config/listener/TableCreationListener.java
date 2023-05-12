@@ -1,5 +1,6 @@
 package org.cyclic.action.batch.config.listener;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -17,11 +18,20 @@ public class TableCreationListener implements JobExecutionListener {
     private final DataSource dataSource;
 
     @Override
-    public void beforeJob(final JobExecution jobExecution) {
+    public void beforeJob(@NonNull final JobExecution jobExecution) {
         try (final Connection databaseConnection = dataSource.getConnection()) {
             ScriptUtils.executeSqlScript(databaseConnection, new ClassPathResource("db/createTables.sql"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
+//    @Override
+//    public void afterJob(@NonNull final JobExecution jobExecution) {
+//        try (final Connection databaseConnection = dataSource.getConnection()) {
+//            ScriptUtils.executeSqlScript(databaseConnection, new ClassPathResource("db/deleteTables.sql"));
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

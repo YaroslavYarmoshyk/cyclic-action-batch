@@ -2,6 +2,7 @@ package org.cyclic.action.batch.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.cyclic.action.batch.dao.entity.PositionEntity;
 import org.cyclic.action.batch.enumeration.Algorithm;
 
 import java.math.BigDecimal;
@@ -26,4 +27,14 @@ public class Position {
     private BigDecimal beforeActionAverageSales;
     private BigDecimal actualAverageSales;
     private Algorithm algorithm;
+
+    public PositionEntity.PositionId getPositionId() {
+        final var positionId = new PositionEntity.PositionId();
+        positionId.setStore(store);
+        positionId.setActionCode(actionCode);
+        positionId.setActionType(actionType);
+        positionId.setActionStartDate(actionStartDate);
+        positionId.setActionEndDate(actionEndDate);
+        return positionId;
+    }
 }

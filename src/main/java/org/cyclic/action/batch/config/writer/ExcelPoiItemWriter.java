@@ -15,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.cyclic.action.batch.config.properties.ExcelManagementProperties;
 import org.cyclic.action.batch.dao.InMemoryStore;
 import org.cyclic.action.batch.model.Position;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
@@ -35,6 +36,7 @@ import static org.cyclic.action.batch.util.CyclicUtil.createReportColumnIndexes;
 
 @Component
 @RequiredArgsConstructor
+@StepScope
 public class ExcelPoiItemWriter implements ItemStreamWriter<Position> {
     private final ExcelFormatService excelFormatService;
     private final ExcelManagementProperties excelProperties;

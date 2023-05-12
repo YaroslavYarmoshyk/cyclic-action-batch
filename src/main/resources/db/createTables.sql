@@ -1,5 +1,4 @@
-CREATE TABLE IF NOT EXISTS positions (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS position (
     name VARCHAR(255),
     store VARCHAR(255),
     manager VARCHAR(255),
@@ -15,5 +14,12 @@ CREATE TABLE IF NOT EXISTS positions (
     action_average_sales NUMERIC(10, 2),
     before_action_average_sales NUMERIC(10, 2),
     actual_average_sales NUMERIC(10, 2),
-    algorithm INT
+    algorithm INT,
+    UNIQUE (store, action_code, action_type, action_start_date, action_end_date)
+);
+
+CREATE TABLE IF NOT EXISTS sales_period (
+                                        id SERIAL PRIMARY KEY,
+                                        action_code INT,
+                                        actual_average_sales NUMERIC(10, 2)
 );

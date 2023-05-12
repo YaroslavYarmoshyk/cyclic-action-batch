@@ -17,10 +17,10 @@ excel-management:
     action-history: 4
     actual-avg-sales: 6
   file-path:
-    action-history: C:\Users\Ya.Yarmoshyk\Desktop\Звіти на java\Прогнозування акцій\дані\Акційна історія.xlsx
-    actual-avg-sales: C:\Users\Ya.Yarmoshyk\Desktop\Звіти на java\Прогнозування акцій\дані\Актуальні СДП.xlsx
+    action-history: C:\Users\Yaroslav Yarmoshyk\IdeaProjects\data\cyclic-action\action.xlsx
+    actual-avg-sales: C:\Users\Yaroslav Yarmoshyk\IdeaProjects\data\cyclic-action\avg.xlsx
   output-directory:
-    action-history: C:\Users\Ya.Yarmoshyk\Desktop\Звіти на java\Прогнозування акцій\
+    action-history: C:\Users\Yaroslav Yarmoshyk\IdeaProjects\etake-batch\cyclic-action-batch\src\main\resources\
 
 cyclic-action:
   start-date: 2023-05-17
