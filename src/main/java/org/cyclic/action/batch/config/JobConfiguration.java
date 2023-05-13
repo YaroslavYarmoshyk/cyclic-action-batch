@@ -3,13 +3,12 @@ package org.cyclic.action.batch.config;
 import org.cyclic.action.batch.config.annotations.ActionHistoryProcessor;
 import org.cyclic.action.batch.config.annotations.ActionHistoryReader;
 import org.cyclic.action.batch.config.annotations.ActionHistoryWriter;
-import org.cyclic.action.batch.config.annotations.ActualAvgSalesReader;
-import org.cyclic.action.batch.config.listener.ItemWriteListenerConfig;
 import org.cyclic.action.batch.config.listener.TableCreationListener;
 import org.cyclic.action.batch.config.processor.CyclicActionItemProcessor;
 import org.cyclic.action.batch.config.writer.ExcelPoiItemWriter;
 import org.cyclic.action.batch.model.Position;
 import org.cyclic.action.batch.model.SalesPeriod;
+import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -38,18 +37,20 @@ public class JobConfiguration {
     private final CyclicActionItemProcessor cyclicActionItemProcessor;
     private final ItemProcessor<Position, Position> actionHistoryItemProcessor;
     private final TableCreationListener tableCreationListener;
+    private final ItemWriteListener<Position> actionHistoryListener;
 
     public JobConfiguration(final JobRepository jobRepository,
                             final PlatformTransactionManager transactionManager,
                             @ActionHistoryReader final ItemStreamReader<Position> actionHistoryReader,
                             @ActionHistoryProcessor final ItemProcessor<Position, Position> actionHistoryItemProcessor,
                             @ActionHistoryWriter final ItemWriter<Position> actionHistoryWriter,
-                            @ActualAvgSalesReader final ItemStreamReader<SalesPeriod> actualAvgSalesReader,
+                            final ItemStreamReader<SalesPeriod> actualAvgSalesReader,
                             final ItemReader<Position> cyclicActionListReader,
                             final ItemStreamWriter<SalesPeriod> actualAvgSalesWriter,
                             final ExcelPoiItemWriter cyclicActionItemWriter,
                             final CyclicActionItemProcessor cyclicActionItemProcessor,
-                            final TableCreationListener tableCreationListener) {
+                            final TableCreationListener tableCreationListener,
+                            final ItemWriteListener<Position> actionHistoryListener) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
         this.actionHistoryReader = actionHistoryReader;
@@ -61,6 +62,7 @@ public class JobConfiguration {
         this.cyclicActionItemProcessor = cyclicActionItemProcessor;
         this.actionHistoryItemProcessor = actionHistoryItemProcessor;
         this.tableCreationListener = tableCreationListener;
+        this.actionHistoryListener = actionHistoryListener;
     }
 
     @Bean
@@ -69,8 +71,8 @@ public class JobConfiguration {
                 .incrementer(new RunIdIncrementer())
                 .listener(tableCreationListener)
                 .start(firstStep())
-//                .next(secondStep())
-//                .next(thirdStep())
+                .next(secondStep())
+                .next(thirdStep())
                 .build();
     }
 
@@ -82,7 +84,7 @@ public class JobConfiguration {
                 .reader(actionHistoryReader)
                 .processor(actionHistoryItemProcessor)
                 .writer(actionHistoryWriter)
-                .listener(new ItemWriteListenerConfig())
+                .listener(actionHistoryListener)
                 .build();
     }
 

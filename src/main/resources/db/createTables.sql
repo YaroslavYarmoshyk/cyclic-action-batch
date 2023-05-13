@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS position (
 );
 
 CREATE TABLE IF NOT EXISTS sales_period (
-                                        id SERIAL PRIMARY KEY,
-                                        action_code INT,
-                                        actual_average_sales NUMERIC(10, 2)
+    store VARCHAR(255),
+    action_code INT,
+    actual_average_sales NUMERIC(10, 2),
+    UNIQUE (store, action_code)
 );

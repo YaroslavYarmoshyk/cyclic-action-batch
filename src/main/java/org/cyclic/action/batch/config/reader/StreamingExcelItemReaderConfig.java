@@ -2,7 +2,6 @@ package org.cyclic.action.batch.config.reader;
 
 import lombok.RequiredArgsConstructor;
 import org.cyclic.action.batch.config.annotations.ActionHistoryReader;
-import org.cyclic.action.batch.config.annotations.ActualAvgSalesReader;
 import org.cyclic.action.batch.config.mapper.PositionRowMapper;
 import org.cyclic.action.batch.config.mapper.SalesPeriodRowMapper;
 import org.cyclic.action.batch.config.properties.ExcelManagementProperties;
@@ -43,7 +42,6 @@ public class StreamingExcelItemReaderConfig {
 
     @Bean
     @StepScope
-    @ActualAvgSalesReader
     public StreamingXlsxItemReader<SalesPeriod> actualAvgSalesReader() {
         final StreamingXlsxItemReader<SalesPeriod> reader = new StreamingXlsxItemReader<>();
         reader.setResource(new FileSystemResource(excelProperties.getAvgSalesFilePath()));

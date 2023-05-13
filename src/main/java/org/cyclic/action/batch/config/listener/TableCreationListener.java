@@ -25,13 +25,4 @@ public class TableCreationListener implements JobExecutionListener {
             throw new RuntimeException(e);
         }
     }
-
-//    @Override
-//    public void afterJob(@NonNull final JobExecution jobExecution) {
-//        try (final Connection databaseConnection = dataSource.getConnection()) {
-//            ScriptUtils.executeSqlScript(databaseConnection, new ClassPathResource("db/deleteTables.sql"));
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }
