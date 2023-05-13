@@ -2,7 +2,6 @@ package org.cyclic.action.batch.config;
 
 import org.cyclic.action.batch.config.annotations.ActionHistoryReader;
 import org.cyclic.action.batch.config.annotations.ActualAvgSalesReader;
-import org.cyclic.action.batch.config.listener.TableCreationListener;
 import org.cyclic.action.batch.config.processor.ActionHistoryItemProcessor;
 import org.cyclic.action.batch.config.processor.CyclicActionItemProcessor;
 import org.cyclic.action.batch.config.writer.ExcelPoiItemWriter;
@@ -33,7 +32,6 @@ public class JobConfiguration {
     private final ExcelPoiItemWriter cyclicActionItemWriter;
     private final CyclicActionItemProcessor cyclicActionItemProcessor;
     private final ActionHistoryItemProcessor actionHistoryItemProcessor;
-    private final TableCreationListener tableCreationListener;
 
     public JobConfiguration(final JobRepository jobRepository,
                             final PlatformTransactionManager transactionManager,
@@ -44,8 +42,7 @@ public class JobConfiguration {
                             final ItemStreamWriter<SalesPeriod> actualAvgSalesWriter,
                             final ExcelPoiItemWriter cyclicActionItemWriter,
                             final CyclicActionItemProcessor cyclicActionItemProcessor,
-                            final ActionHistoryItemProcessor actionHistoryItemProcessor,
-                            final TableCreationListener tableCreationListener) {
+                            final ActionHistoryItemProcessor actionHistoryItemProcessor) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
         this.actionHistoryReader = actionHistoryReader;
@@ -56,14 +53,12 @@ public class JobConfiguration {
         this.cyclicActionItemWriter = cyclicActionItemWriter;
         this.cyclicActionItemProcessor = cyclicActionItemProcessor;
         this.actionHistoryItemProcessor = actionHistoryItemProcessor;
-        this.tableCreationListener = tableCreationListener;
     }
 
     @Bean
     public Job job() {
         return new JobBuilder("firstJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .listener(tableCreationListener)
                 .start(firstStep())
                 .next(secondStep())
                 .next(thirdStep())
