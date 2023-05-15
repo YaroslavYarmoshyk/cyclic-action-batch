@@ -68,6 +68,7 @@ public class JobConfiguration {
     @Bean
     public Step firstStep() {
         return new StepBuilder("actionHistoryStep", jobRepository)
+                .allowStartIfComplete(true)
                 .<Position, Position>chunk(500, transactionManager)
                 .reader(actionHistoryReader)
                 .processor(actionHistoryItemProcessor)
@@ -78,6 +79,7 @@ public class JobConfiguration {
     @Bean
     public Step secondStep() {
         return new StepBuilder("actualSalesStep", jobRepository)
+                .allowStartIfComplete(true)
                 .<SalesPeriod, SalesPeriod>chunk(10, transactionManager)
                 .reader(actualAvgSalesReader)
                 .writer(actualAvgSalesWriter)
@@ -87,6 +89,7 @@ public class JobConfiguration {
     @Bean
     public Step thirdStep() {
         return new StepBuilder("forecastStep", jobRepository)
+                .allowStartIfComplete(true)
                 .<Position, Position>chunk(500, transactionManager)
                 .reader(cyclicActionListReader)
                 .processor(cyclicActionItemProcessor)
