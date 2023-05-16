@@ -58,6 +58,7 @@ public class JobConfiguration {
     @Bean
     public Job job() {
         return new JobBuilder("firstJob", jobRepository)
+                .preventRestart()
                 .incrementer(new RunIdIncrementer())
                 .start(firstStep())
                 .next(secondStep())
