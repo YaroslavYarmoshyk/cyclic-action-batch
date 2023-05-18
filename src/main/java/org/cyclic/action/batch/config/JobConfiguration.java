@@ -4,6 +4,7 @@ import org.cyclic.action.batch.config.annotations.ActionHistoryReader;
 import org.cyclic.action.batch.config.annotations.ActualAvgSalesReader;
 import org.cyclic.action.batch.config.processor.ActionHistoryItemProcessor;
 import org.cyclic.action.batch.config.processor.CyclicActionItemProcessor;
+import org.cyclic.action.batch.config.processor.ActualAvgSalesProcessor;
 import org.cyclic.action.batch.config.writer.ExcelPoiItemWriter;
 import org.cyclic.action.batch.model.Position;
 import org.cyclic.action.batch.model.SalesPeriod;
@@ -32,6 +33,7 @@ public class JobConfiguration {
     private final ExcelPoiItemWriter cyclicActionItemWriter;
     private final CyclicActionItemProcessor cyclicActionItemProcessor;
     private final ActionHistoryItemProcessor actionHistoryItemProcessor;
+    private final ActualAvgSalesProcessor actualAvgSalesProcessor;
 
     public JobConfiguration(final JobRepository jobRepository,
                             final PlatformTransactionManager transactionManager,
@@ -42,7 +44,8 @@ public class JobConfiguration {
                             final ItemStreamWriter<SalesPeriod> actualAvgSalesWriter,
                             final ExcelPoiItemWriter cyclicActionItemWriter,
                             final CyclicActionItemProcessor cyclicActionItemProcessor,
-                            final ActionHistoryItemProcessor actionHistoryItemProcessor) {
+                            final ActionHistoryItemProcessor actionHistoryItemProcessor,
+                            final ActualAvgSalesProcessor actualAvgSalesProcessor) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
         this.actionHistoryReader = actionHistoryReader;
@@ -53,6 +56,7 @@ public class JobConfiguration {
         this.cyclicActionItemWriter = cyclicActionItemWriter;
         this.cyclicActionItemProcessor = cyclicActionItemProcessor;
         this.actionHistoryItemProcessor = actionHistoryItemProcessor;
+        this.actualAvgSalesProcessor = actualAvgSalesProcessor;
     }
 
     @Bean
@@ -69,7 +73,7 @@ public class JobConfiguration {
     public Step firstStep() {
         return new StepBuilder("actionHistoryStep", jobRepository)
                 .allowStartIfComplete(true)
-                .<Position, Position>chunk(500, transactionManager)
+                .<Position, Position>chunk(10000, transactionManager)
                 .reader(actionHistoryReader)
                 .processor(actionHistoryItemProcessor)
                 .writer(actionHistoryWriter)
@@ -80,8 +84,9 @@ public class JobConfiguration {
     public Step secondStep() {
         return new StepBuilder("actualSalesStep", jobRepository)
                 .allowStartIfComplete(true)
-                .<SalesPeriod, SalesPeriod>chunk(10, transactionManager)
+                .<SalesPeriod, SalesPeriod>chunk(10000, transactionManager)
                 .reader(actualAvgSalesReader)
+                .processor(actualAvgSalesProcessor)
                 .writer(actualAvgSalesWriter)
                 .build();
     }
@@ -90,7 +95,7 @@ public class JobConfiguration {
     public Step thirdStep() {
         return new StepBuilder("forecastStep", jobRepository)
                 .allowStartIfComplete(true)
-                .<Position, Position>chunk(500, transactionManager)
+                .<Position, Position>chunk(5000, transactionManager)
                 .reader(cyclicActionListReader)
                 .processor(cyclicActionItemProcessor)
                 .writer(cyclicActionItemWriter)

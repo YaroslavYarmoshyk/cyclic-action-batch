@@ -6,7 +6,8 @@ import org.cyclic.action.batch.model.SalesPeriod;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class InMemoryStore {
     public static List<Position> actionHistory = new ArrayList<>();
@@ -21,16 +22,13 @@ public class InMemoryStore {
         cyclicAction.add(position);
     }
 
-    public static void addPeriodToActualAvgSales(final SalesPeriod salesPeriod) {
-        actualAvgSales.add(salesPeriod);
+    public static void addPeriodsToActualAvgSales(final Collection<? extends SalesPeriod> salesPeriod) {
+        actualAvgSales.addAll(salesPeriod);
     }
 
-    public static boolean isCyclicActionContainsCode(final Integer code) {
-        if (Objects.isNull(code)) {
-            return false;
-        }
+    public static Set<Integer> getActionCodes() {
         return cyclicAction.stream()
                 .map(Position::getActionCode)
-                .anyMatch(code::equals);
+                .collect(Collectors.toSet());
     }
 }

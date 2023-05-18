@@ -14,13 +14,8 @@ public class ActualAvgSalesWriter implements ItemStreamWriter<SalesPeriod> {
 
     @Override
     public void write(@NonNull final Chunk<? extends SalesPeriod> chunk) {
-        for (final SalesPeriod period : chunk.getItems()) {
-            if (InMemoryStore.isCyclicActionContainsCode(period.actionCode())) {
-                InMemoryStore.addPeriodToActualAvgSales(period);
-            }
-        }
+        InMemoryStore.addPeriodsToActualAvgSales(chunk.getItems());
     }
-
 
     @Override
     public void open(@NonNull final ExecutionContext executionContext) throws ItemStreamException {

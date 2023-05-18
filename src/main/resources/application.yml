@@ -12,10 +12,10 @@ spring:
 excel-management:
   skip-lines:
     action-history: 5
-    actual-avg-sales: 7
+    actual-avg-sales: 6
   header-row-index:
     action-history: 4
-    actual-avg-sales: 6
+    actual-avg-sales: 5
   file-path:
     action-history: C:\Users\Ya.Yarmoshyk\Desktop\Звіти на java\Прогнозування акцій\дані\Акційна історія.xlsx
     actual-avg-sales: C:\Users\Ya.Yarmoshyk\Desktop\Звіти на java\Прогнозування акцій\дані\Актуальні СДП.xlsx
@@ -23,5 +23,5 @@ excel-management:
     action-history: C:\Users\Ya.Yarmoshyk\Desktop\Звіти на java\Прогнозування акцій\
 
 cyclic-action:
-  start-date: 2023-05-17
-  end-date: 2023-05-30
+  start-date: 2023-05-31
+  end-date: 2023-06-13
