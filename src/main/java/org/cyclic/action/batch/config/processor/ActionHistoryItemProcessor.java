@@ -2,6 +2,7 @@ package org.cyclic.action.batch.config.processor;
 
 import lombok.NonNull;
 import org.cyclic.action.batch.dao.InMemoryStore;
+import org.cyclic.action.batch.enumeration.ActionType;
 import org.cyclic.action.batch.model.Position;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,9 @@ public class ActionHistoryItemProcessor implements ItemProcessor<Position, Posit
 
     @Override
     public Position process(@NonNull final Position position) {
+        if (!ActionType.isCyclic(position.getActionType())) {
+            return null;
+        }
         if (isAnalyzedPosition(position, actionStartDate, actionEndDate)) {
             InMemoryStore.addPositionToActualAction(position);
             return null;

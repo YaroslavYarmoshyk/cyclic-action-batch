@@ -1,20 +1,19 @@
 package org.cyclic.action.batch.service.impl;
 
-import org.cyclic.action.batch.enumeration.ActionType;
+import org.apache.commons.math3.util.Pair;
 import org.cyclic.action.batch.enumeration.Algorithm;
 import org.cyclic.action.batch.model.Position;
 import org.cyclic.action.batch.service.AlgorithmService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 @Service
 public class AlgorithmServiceImpl implements AlgorithmService {
     @Override
-    public Map<Algorithm, List<Position>> defineAlgorithmMap(final Position position, final List<Position> history) {
+    public Pair<Algorithm, List<Position>> definePositionsByAlgorithm(final Position position, final List<Position> history) {
         final String positionThirdGroup = position.getThirdGroup();
         final String positionStore = position.getStore();
         final Integer positionStoreFormat = position.getStoreFormat();
@@ -22,61 +21,47 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 
         final List<Position> firstAlgorithmPositions = history.stream()
                 .filter(firstAlgorithmCondition(positionStore, positionCode))
-                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
                 .toList();
         if (!firstAlgorithmPositions.isEmpty()) {
-            return Map.of(Algorithm.FIRST, firstAlgorithmPositions);
+            return new Pair<>(Algorithm.FIRST, firstAlgorithmPositions);
         }
 
         final List<Position> secondAlgorithmPositions = history.stream()
                 .filter(secondAlgorithmCondition(positionStoreFormat, positionCode))
-                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
                 .toList();
         if (!secondAlgorithmPositions.isEmpty()) {
-            return Map.of(Algorithm.SECOND, secondAlgorithmPositions);
+            return new Pair<>(Algorithm.SECOND, secondAlgorithmPositions);
         }
 
         final List<Position> thirdAlgorithmPositions = history.stream()
                 .filter(thirdAlgorithmCondition(positionCode))
-                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
                 .toList();
         if (!thirdAlgorithmPositions.isEmpty()) {
-            return Map.of(Algorithm.THIRD, thirdAlgorithmPositions);
+            return new Pair<>(Algorithm.THIRD, thirdAlgorithmPositions);
         }
 
         final List<Position> fourthAlgorithmPositions = history.stream()
                 .filter(fourthAlgorithmCondition(positionStore, positionThirdGroup))
-                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
                 .toList();
         if (!fourthAlgorithmPositions.isEmpty()) {
-            return Map.of(Algorithm.FOURTH, fourthAlgorithmPositions);
+            return new Pair<>(Algorithm.FOURTH, fourthAlgorithmPositions);
         }
 
         final List<Position> fifthAlgorithmPositions = history.stream()
                 .filter(fifthAlgorithmCondition(positionStoreFormat, positionThirdGroup))
-                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
                 .toList();
         if (!fifthAlgorithmPositions.isEmpty()) {
-            return Map.of(Algorithm.FIFTH, fifthAlgorithmPositions);
+            return new Pair<>(Algorithm.FIFTH, fifthAlgorithmPositions);
         }
 
         final List<Position> sixthAlgorithmPositions = history.stream()
                 .filter(sixthAlgorithmCondition(positionThirdGroup))
-                .filter(pos -> ActionType.isCyclic(pos.getActionType()))
                 .toList();
         if (!sixthAlgorithmPositions.isEmpty()) {
-            return Map.of(Algorithm.SIXTH, sixthAlgorithmPositions);
+            return new Pair<>(Algorithm.SIXTH, sixthAlgorithmPositions);
         }
 
-        return Map.of(Algorithm.ZERO, List.of());
-    }
-
-    @Override
-    public Algorithm getAlgorithm(final Map<Algorithm, List<Position>> algorithmMap) {
-        return algorithmMap.entrySet().stream()
-                .findFirst()
-                .map(Map.Entry::getKey)
-                .orElse(Algorithm.ZERO);
+        return new Pair<>(Algorithm.ZERO, List.of());
     }
 
     private static Predicate<Position> firstAlgorithmCondition(final String positionStore,

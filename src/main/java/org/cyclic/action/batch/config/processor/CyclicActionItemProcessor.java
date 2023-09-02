@@ -2,6 +2,7 @@ package org.cyclic.action.batch.config.processor;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.math3.util.Pair;
 import org.cyclic.action.batch.dao.InMemoryStore;
 import org.cyclic.action.batch.enumeration.Algorithm;
 import org.cyclic.action.batch.model.Position;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -29,11 +29,12 @@ public class CyclicActionItemProcessor implements ItemProcessor<Position, Positi
 
     @Override
     public Position process(@NonNull final Position position) {
-        final Map<Algorithm, List<Position>> algorithmMap = algorithmService.defineAlgorithmMap(position, InMemoryStore.actionHistory);
-        final Algorithm algorithm = algorithmService.getAlgorithm(algorithmMap);
+        final Pair<Algorithm, List<Position>> posAlgPair = algorithmService.definePositionsByAlgorithm(position, InMemoryStore.actionHistory);
+        final Algorithm algorithm = posAlgPair.getKey();
+        final List<Position> positions = posAlgPair.getValue();
 
-        final BigDecimal beforeActionAvgSales = defineAverageSales(algorithm, algorithmMap.get(algorithm), Position::getBeforeActionAverageSales);
-        final BigDecimal actionAvgSales = defineAverageSales(algorithm, algorithmMap.get(algorithm), Position::getActionAverageSales);
+        final BigDecimal beforeActionAvgSales = defineAverageSales(algorithm, positions, Position::getBeforeActionAverageSales);
+        final BigDecimal actionAvgSales = defineAverageSales(algorithm, positions, Position::getActionAverageSales);
         final BigDecimal actualAverageSales = getActualAverageSales(position, actualAvgSales);
 
         position.setAlgorithm(algorithm);
